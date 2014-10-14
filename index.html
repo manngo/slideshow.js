@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Test</title>
+	<meta charset="utf-8">
+	<script type="text/javascript" crossorigin>
+		'use strict';
+/*	Notes
+	================================================
+
+	To Do
+
+	1.	Fade through black (both, using mask)
+	2.	Allow alternative to divs
+	3.	Automatically create inner div for styling
+	
+	Options
+
+		var options= {
+				"method":		"fade,both",
+				"timing":		"3000,1000,20",
+				"hover":		false,
+				"click":		true,
+				"onstart":		undefined,
+				"onstop":		undefined,
+				"start":		true,
+				"restart":		false,
+		}
+		
+		method		fade[,in|out|both|none]|cover|carousel[,up|down|left|right]
+		timing		delay[,duration[,steps]]
+		hover		true|false
+		click		true|false
+		onstart	callback function
+		onstop		callback function
+		start		true|false
+		restart	true|false
+
+	================================================ */
+
+		window.onerror=function(message,url,line) {
+			say('Error: '+message+'\n'+url+': '+line);
+		}
+		window.onload=init;
+		function init() {
+			var options={
+				"method":		"carousel,down",
+				"timing":		"3000,1000",
+				"hover":		false,
+				"click":		true,
+				"onstart":		undefined,
+				"onstop":		undefined,
+				"start":		true,
+				"restart":		false,
+			};
+			var doit=slideShow('div#slideshow',options);
+		}
+		function slideShow(container,options) {
+			options=options||{};
+			options.method=options.method||'fade';
+			options.timing=options.timing||'3000,1000,20';
+			options.restart=!!options.restart;
+			options.hover=!!options.hover;
+			options.click=!!options.click;
+
+			var doit;
+			var previous, next;
+			var style;
+			
+			//	Timing: delay=3000,duration=1000,steps=20
+				var timing=options.timing.split(/\s*,\s*/);
+				var delay=timing[0]||3000;
+				var duration=timing[1]||1000;
+				var steps=timing[2]||20;
+
+			//	Method: method=fade,direction=both
+				var method=options.method.split(/,\s*/);
+				var action=method[0]||'fade';
+				var direction;
+				switch(action) {
+					case 'cover':
+					case 'carousel':
+						direction=method[1]||'left';
+						break;
+					case 'fade':
+					default:
+						direction=method[1]||'both';
+				}
+
+			//	Container Element
+//				var div=document.querySelector(container);
+				container=document.querySelector(container);
+				var slides=container.querySelectorAll('div');
+//				container=document.createElement('div');
+//				container=div;
+//				for(i=0;i<slides.length;i++) {//>
+//					container.appendChild(div.removeChild(slides[i]));
+//				}
+				container.style.overflow='hidden';
+				if (window.getComputedStyle) style=getComputedStyle(container, null)
+				else style=container.currentStyle
+				if(style.position=='static') container.style.position='relative';
+
+			//	Individual Slides
+				//	var mask=document.createElement('div');
+				//	mask.style.cssText='background-color: black;';
+				//	container.appendChild(mask);
+				for(i=0;i<slides.length;i++) slides[i].style.display='none'; // >
+				for(i=0;i<slides.length;i++) slides[i].style.position='absolute'; // >
+			var variation;
+			var i,
+				slide=0,
+				slideTimer=null,
+				inTimer=null,
+				outTimer=null;
+
+			switch(action) {
+				// also set doit here
+				case 'cover':
+					variation=null;
+					method=doSlideIn;
+					break;
+				case 'carousel':
+					variation='carousel';
+					method=doSlideIn;
+					break;
+				case 'fade':
+				default:
+					method=doFade;
+			}
+
+			if(options.click) container.onclick=start;
+			if(options.hover) container.onmouseover=container.onmouseout=start;
+
+			if(options.start) start();
+return start;
+			function start() {
+				if(!slideTimer) {
+					slideTimer=window.setInterval(method,delay);
+					method(true);
+				}
+				else {
+					window.clearInterval(slideTimer);
+					slideTimer=null;
+				}
+			}
+
+			function doSlideIn(now) {
+				var bound, edge, size, step;
+				var previous, next;
+
+				if(now) {
+					if(options.restart) slide=0;
+					for(var i=0;i<slides.length;i++) slides[i].style.display='block'; // >
+				}
+
+				slide++;
+				slide%=slides.length;
+
+				previous=slides[(slide-1+slides.length)%slides.length];
+				next=slides[slide];
+				for(i=0;i<slides.length;i++) slides[i].style.zIndex=1000; //>
+				previous.style.zIndex=2000;
+				next.style.zIndex=2001;
+
+				switch(direction) {
+					case 'up':
+						bound=container.clientTop;
+						edge=container.clientHeight;
+						next.style.top=container.clientHeight+'px';
+//						size=container.clientHeight;
+						step=container.clientHeight/steps;
+						doit=slideUp;
+						break;
+					case 'down':
+						bound=container.clientTop;
+						edge=-container.offsetHeight;
+						next.style.top=container.clientTop-container.clientHeight+'px';
+//						size=container.clientHeight;
+						step=container.clientHeight/steps;
+						doit=slideDown;
+						break;
+
+					case 'right':
+						bound=container.clientLeft;
+						edge=-container.offsetWidth;
+						next.style.left=container.clientLeft-container.clientWidth+'px';
+//						size=container.clientWidth;
+						step=container.clientWidth/steps;
+						doit=slideRight;
+						break;
+					case 'left':
+					default:
+						bound=container.clientLeft;
+						edge=container.offsetWidth;
+						next.style.left=container.clientWidth+'px';
+//						size=container.clientWidth;
+						step=container.clientWidth/steps;
+						doit=slideLeft;
+				}
+
+
+				if(!inTimer) {
+					inTimer=window.setInterval(doit,duration/steps);
+				}
+
+				function slideLeft() {
+					edge-=step;
+					if(edge<=bound) { //>
+						next.style.left=0+'px';
+						window.clearInterval(inTimer);
+						inTimer=null;
+					}
+					else {
+						if(variation=='carousel') previous.style.left=edge-container.clientWidth+'px';
+						next.style.left=edge+'px';
+					}
+				}
+				function slideRight() {
+					edge+=step;
+					if(edge>=bound) {	
+						next.style.left=bound+'px';
+						window.clearInterval(inTimer);
+						inTimer=null;
+					}
+					else {
+						if(variation=='carousel') previous.style.left=edge+container.clientWidth+'px';
+						next.style.left=edge+'px';						}
+				}
+				function slideUp() {
+					edge-=step;
+					if(edge<=bound) { //>
+						next.style.top=0+'px';
+						window.clearInterval(inTimer);
+						doit.doing=false;
+						inTimer=null;
+					}
+					else {
+						if(variation=='carousel') previous.style.top=edge-container.clientHeight+'px';
+						next.style.top=edge+'px';
+					}
+				}
+				function slideDown() {
+					edge+=step;
+					if(edge>=bound) {	
+						next.style.top=bound+'px';
+						window.clearInterval(inTimer);
+						inTimer=null;
+					}
+					else {
+						if(variation=='carousel') previous.style.top=edge+container.clientHeight+'px';
+						next.style.top=edge+'px';					}
+				}
+			}
+
+			function doFade(now) {
+				//	mask.style.zIndex=2001;
+				if(now) {
+					if(options.restart) slide=0;
+					for(i=0;i<slides.length;i++) slides[i].style.display='block'; //>
+					switch(direction) {
+						case 'in':
+							doit=doFadeIn;
+							break;
+						case 'out':
+							doit=doFadeOut;
+							break;
+						case 'none':
+							doit=doFadeNone;
+							break;
+						case 'both':
+						default:
+							doit=doFadeBoth;
+					}
+					slides[slide].style.zIndex=2002;
+					return;
+				}
+
+				for(i=0;i<slides.length;i++) slides[i].style.zIndex=1000; //>
+				if(inTimer) {
+					window.clearInterval(inTimer);
+					inTimer=null;
+				}
+
+				previous=slides[slide];
+				previous.style.zIndex=2000;
+				slide++;
+				slide%=slides.length;
+				next=slides[slide];
+				next.style.zIndex=2002;
+
+				doit();
+
+				function doFadeIn() {
+					fadeIn(next);
+				}
+				
+				function doFadeOut() {
+					next.style.zIndex=2000;
+					previous.style.zIndex=2002;
+					fadeOut(previous,function() {
+						previous.style.zIndex=2000;
+						next.style.zIndex=2002;
+					});
+				}
+				
+				function doFadeNone() {
+					//	this will do it ?
+				}
+				
+				function doFadeBoth() {
+					fadeOut(previous);
+					fadeIn(next);
+				}
+
+				function fadeIn(element,callback) {
+					var opacity;
+					if(!inTimer) {
+						element.style.display='block';
+						element.style.opacity=0;
+						inTimer=window.setInterval(fade,duration/steps);
+					}				
+					function fade() {
+						opacity=parseFloat(element.style.opacity)+1/steps;
+						element.style.opacity=opacity;
+						if(opacity>=1) {
+							element.style.opacity=1;
+							window.clearInterval(inTimer);
+							inTimer=null;
+							if(callback) callback();
+						}
+					}
+				}
+				function fadeOut(element,callback) {
+					var opacity;
+					if(!inTimer) {
+						element.style.opacity=1;
+						outTimer=window.setInterval(fade,duration/steps);
+					}				
+					function fade() {
+						opacity=parseFloat(element.style.opacity)-1/steps;
+						element.style.opacity=opacity;
+						if(opacity<=0) { // >
+							window.clearInterval(outTimer);
+							outTimer=null;
+//							element.style.display='none';
+							element.style.opacity=1;
+							if(callback) callback();
+						}
+					}
+				}
+			}
+		}
+		
+		function say() {
+			var div=document.createElement('div');
+			//	div.style.cssText='';
+			div.setAttribute('id','message');
+			document.body.appendChild(div);
+			say=function() {
+				var message=Array.prototype.slice.call(arguments);
+				div.textContent+=message.join(';')+'\n';
+			}
+			say(Array.prototype.slice.call(arguments));
+		}
+	</script>
+	<style type="text/css">
+		body {
+			width: 800px;
+			margin: 0 auto;
+			font-family: sans-serif;
+		}
+		h1 {
+			width: 480px;
+			border: thin solid #666;
+			
+			box-sizing: border-box;
+			padding: .4em;
+			text-align: center;
+			color: #666;
+			text-shadow: 0 1px 0 #fff;
+			background-color: #eee;
+			border-radius: 8px;
+			box-shadow:
+				inset 1px 1px 1px #ddd,
+				inset -1px -1px 1px #666;
+		}
+		div#slideshow {
+			width: 100%;
+			height: 100%;
+			position: relative;
+			border: thin solid #eee;
+			qborder-radius: 8px;
+			box-shadow:
+				1px 1px 1px 0px #ddd,
+				-1px -1px 1px 00px #333;
+			box-sizing: border-box;
+		}
+		
+		div#frame {
+			width: 480px;
+			height: 360px;
+			border: thin solid #666;
+			
+			box-sizing: border-box;
+			padding: 2em;
+			background-color: #eee;
+			border-radius: 8px;
+			box-shadow:
+				inset 1px 1px 1px #ddd,
+				inset -1px -1px 1px #666;
+		}
+		
+		div#slideshow>div {
+			width: 100%;
+			height: 100%;
+			text-align: center;
+			font-size: 4em;
+			box-sizing: border-box;
+			padding: 1em;
+		}
+		div#slideshow>div:nth-child(1) {
+			background-color: red;
+		}
+		div#slideshow>div:nth-child(2) {
+			background-color: yellow;
+		}
+		div#slideshow>div:nth-child(3) {
+			background-color: green;
+		}
+		div#slideshow>div:nth-child(4) {
+			background-color: lightblue;
+		}
+		div#slideshow>div:nth-child(5) {
+			background-color: orange;
+		}
+		div#slideshow>div:nth-child(6) {
+			background-color: pink;
+		}
+		
+		div#message {
+			width: 200px;	height: 200px;
+			overflow: auto;
+			position: fixed;
+			right: 20px;	top: 20px;
+			white-space: pre-wrap;
+			border: thin solid #666;
+			box-shadow: 4px 4px 4px #666;
+			padding: .5em;
+			font-family: monospace;
+		}
+		
+		form#options {
+			margin-top: 2em;
+			background-color: #ddd;
+			padding: 1em;
+		}
+		form#options span.label {
+			font-weight: bold;
+			display: inline-block;
+			width: 6em;
+		}
+	</style>
+</head>
+<body>
+	<h1>Slide Show Example</h1>
+	<div id="frame">
+		<div id="slideshow"><!-- this is a bare container -->
+			<div>one</div>
+			<div>two</div>
+			<div>three</div>
+			<div>four</div>
+			<div>five</div>
+			<div>six</div>
+		</div>
+	<div>
+</body>
+</html>
