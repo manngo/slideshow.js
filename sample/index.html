@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>Test</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="slideshow.css" media="all">
+	<script type="text/javascript" crossorigin src="slideshow.js"></script>
+	<script type="text/javascript" crossorigin>
+		'use strict';
+		window.onerror=function(message,url,line) {
+			say('Error: '+message+'\n'+url+': '+line);
+		};
+
+		if(window.addEventListener) window.addEventListener('load',init,false);
+		else window.attachEvent('onload',init);
+
+		function init() {
+			var options={
+				"method":		"fade,left",
+				"timing":		"3000,1000",
+				"hover":		false,
+				"click":		true,
+				"onstart":		undefined,
+				"onstop":		undefined,
+				"start":		true,
+				"restart":		false,
+			};
+			var doit=slideShow('div#slideshow',options);
+
+//			window.setTimeout(function() {
+//				doit(false);
+//				options.method='fade,both';
+//				doit=slideShow('div#slideshow',options);
+//			},10000);
+
+		}
+
+		function say() {
+			var div=document.createElement('div');
+				div.style.cssText='width: 200px; height: 200px; overflow: auto; position: fixed; right: 20px; top: 20px; white-space: pre-wrap; border: thin solid #666; box-shadow: 4px 4px 4px #666; padding: .5em; font-family: monospace;';
+			div.setAttribute('id','message');
+			document.body.appendChild(div);
+			say=function() {
+				var message=Array.prototype.slice.call(arguments);
+				div.textContent+=message.join(';')+'\n';
+			};
+			say(Array.prototype.slice.call(arguments));
+		}
+	</script>
+	<style type="text/css">
+	</style>
+</head>
+<body>
+	<h1>Slide Show Example</h1>
+	<div id="frame">
+		<div id="slideshow"><!-- this is a bare container -->
+			<div>FIRE</div>
+			<div>NEON</div>
+			<div>CLOUD</div>
+			<div>EMBOSSED</div>
+			<div>RETRO</div>
+			<div>3D</div>
+		</div>
+	<div>
+</body>
+</html>
