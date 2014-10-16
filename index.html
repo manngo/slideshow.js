@@ -1,0 +1,200 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Slideshow.js by manngo</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Slideshow.js</h1>
+        <p>Slide Show Widget</p>
+
+        <p class="view"><a href="https://github.com/manngo/slideshow.js">View the Project on GitHub <small>manngo/slideshow.js</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/manngo/slideshow.js/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/manngo/slideshow.js/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/manngo/slideshow.js">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="slideshowjs" class="anchor" href="#slideshowjs"><span class="octicon octicon-link"></span></a>slideshow.js</h1>
+
+<p>Simple Slide Show widget to cycle through a collection of <code>div</code> elements.</p>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<h3>
+<a name="html" class="anchor" href="#html"><span class="octicon octicon-link"></span></a>HTML</h3>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"frame"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"slideshow"</span><span class="nt">&gt;</span><span class="c">&lt;!-- this is a bare container --&gt;</span>
+        <span class="nt">&lt;div&gt;</span>one<span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>two<span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>three<span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>four<span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>five<span class="nt">&lt;/div&gt;</span>
+        <span class="nt">&lt;div&gt;</span>six<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;div&gt;</span>
+</pre></div>
+
+<ol>
+<li>Develop a collection of <code>div</code> elements.</li>
+<li>Wrap inside a <code>div</code> element (<code>id="slideshow"</code> above).</li>
+<li>The outer <code>div</code> is optional, and only for your layout.</li>
+</ol>
+
+<h3>
+<a name="javascript" class="anchor" href="#javascript"><span class="octicon octicon-link"></span></a>JavaScript</h3>
+
+<p>In HTML:</p>
+
+<div class="highlight highlight-html"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"text/javascript"</span> <span class="na">src=</span><span class="s">"slideshow.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+<p>In your JavaScript code:</p>
+
+<div class="highlight highlight-js"><pre><span class="nb">window</span><span class="p">.</span><span class="nx">onload</span><span class="o">=</span><span class="nx">init</span><span class="p">;</span>
+<span class="kd">function</span> <span class="nx">init</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">options</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"method"</span><span class="o">:</span>       <span class="s2">"fade,both"</span><span class="p">,</span>
+        <span class="s2">"timing"</span><span class="o">:</span>       <span class="s2">"3000,1000,20"</span><span class="p">,</span>
+        <span class="s2">"hover"</span><span class="o">:</span>        <span class="kc">false</span><span class="p">,</span>
+        <span class="s2">"click"</span><span class="o">:</span>        <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">"onstart"</span><span class="o">:</span>      <span class="kc">undefined</span><span class="p">,</span>
+        <span class="s2">"onstop"</span><span class="o">:</span>       <span class="kc">undefined</span><span class="p">,</span>
+        <span class="s2">"start"</span><span class="o">:</span>        <span class="kc">true</span><span class="p">,</span>
+        <span class="s2">"restart"</span><span class="o">:</span>      <span class="kc">false</span><span class="p">,</span>
+    <span class="p">};</span>
+    <span class="kd">var</span> <span class="nx">doit</span><span class="o">=</span><span class="nx">slideShow</span><span class="p">(</span><span class="s1">'div#slideshow'</span><span class="p">,</span><span class="nx">options</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<ol>
+<li>The first parameter is a CSS-style selector for the div which contains your slides.</li>
+<li>The second parameter is itself optional. The values above are all defaults.</li>
+<li>The return value is a function which you can call to start or stop the slide show.</li>
+</ol>
+
+<h4>
+<a name="method" class="anchor" href="#method"><span class="octicon octicon-link"></span></a>Method</h4>
+
+<p>The method value is constructed as follows:</p>
+
+<pre><code>"method":   "effect,direction"
+</code></pre>
+
+<p>The effect is one of the following. The direction is optional; the first in the list is the default.</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Effect</th>
+<th align="left">Meaning</th>
+<th align="left">Possible Directions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">fade</td>
+<td align="left">Fade in or out</td>
+<td align="left">both in out none</td>
+</tr>
+<tr>
+<td align="left">cover</td>
+<td align="left">Slide over previous</td>
+<td align="left">left right up down</td>
+</tr>
+<tr>
+<td align="left">carousel</td>
+<td align="left">Push aside previous</td>
+<td align="left">left right up down</td>
+</tr>
+</tbody>
+</table>
+
+<h4>
+<a name="timing" class="anchor" href="#timing"><span class="octicon octicon-link"></span></a>Timing</h4>
+
+<p>The timing value takes the following form:</p>
+
+<pre><code>"timing":   "delay,duration,steps"
+</code></pre>
+
+<p>The duration and steps are optional; if included, they must be in the correct order.</p>
+
+<table>
+<thead>
+<tr>
+<th align="left">Parameter</th>
+<th align="left">Meaning</th>
+<th align="left">Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">delay</td>
+<td align="left">Time between slides (ms)</td>
+<td align="left">3000</td>
+</tr>
+<tr>
+<td align="left">delay</td>
+<td align="left">Duration of effect (ms)</td>
+<td align="left">1000</td>
+</tr>
+<tr>
+<td align="left">steps</td>
+<td align="left">No of steps for effect</td>
+<td align="left">20</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a name="to-do" class="anchor" href="#to-do"><span class="octicon octicon-link"></span></a>To Do</h2>
+
+<ol>
+<li> Fade through black (both, using mask)</li>
+<li> Allow alternative to divs</li>
+<li> Automatically create inner div for styling</li>
+<li> Ensure that duration&lt;=delay</li>
+<li>Test whether fadeout is working with IE</li>
+<li>Allow carousel to work with one long div, in sections</li>
+<li>Allow carousel to display more than one div</li>
+<li>Ajax Support</li>
+</ol>
+
+<p>Good grief! This is getting out of hand … ?</p>
+
+<h2>
+<a name="disclaimer" class="anchor" href="#disclaimer"><span class="octicon octicon-link"></span></a>Disclaimer</h2>
+
+<p>Usual stuff:</p>
+
+<ul>
+<li>This product does what it does and doesn’t do what it doesn‘t do. E &amp; OE</li>
+<li>It probably won’t break anything, but if it does, it’s all lies I tell you, it wasn’t me, it was someone who looks like me, I’ve never heard of the place, I don’t know what you’re talking about, and, if you’re talking about Room 403, I’ve never heard if it.</li>
+</ul>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/manngo">manngo</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
