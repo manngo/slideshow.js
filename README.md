@@ -3,6 +3,8 @@ slideshow.js
 
 Simple Slide Show widget to cycle through a collection of ```div``` elements.
 
+You can see a sample [here](https://manngo.github.io/slideshow.js/sample/).
+
 Usage
 -----
 
