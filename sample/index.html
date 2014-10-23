@@ -16,22 +16,33 @@
 
 		function init() {
 			var options={
-				"method":		"fade,left",
-				"timing":		"3000,1000",
+				"method":		"carousel,left",
+				"timing":		"3000,1000,20",
 				"hover":		false,
 				"click":		true,
 				"onstart":		undefined,
 				"onstop":		undefined,
 				"start":		true,
-				"restart":		false,
+				"restart":		true,
 			};
-			var doit=slideShow('div#slideshow',options);
+			var theSlideShow=slideShow('div#slideshow',options);
 
-//			window.setTimeout(function() {
-//				doit(false);
-//				options.method='fade,both';
-//				doit=slideShow('div#slideshow',options);
-//			},10000);
+			var form=document.querySelector('form#settings');
+			form['doit'].onclick=function() {
+				var method=document.querySelector('input[name="method"]:checked').value;
+				//	Method
+					if(method=='cover') options.method='cover,'+form['cover-direction'].value;
+					else if(method=='carousel') options.method='carousel,'+form['carousel-direction'].value;
+					else options.method='fade,'+form['fade-direction'].value;
+				//	Timing
+					options.timing=form['delay'].value+','+form['duration'].value+','+form['steps'].value;
+				//	Pause
+					options.hover=form['hover'].checked;
+					options.click=form['click'].checked;
+				theSlideShow(false);
+				theSlideShow=slideShow('div#slideshow',options);
+				return false;
+			};
 
 		}
 
@@ -48,6 +59,56 @@
 		}
 	</script>
 	<style type="text/css">
+		form#settings {
+			width: 30em;
+		}
+		form#settings label {
+			font-weight: bold;
+			display: inline-block;
+			width: 4.5em;
+			margin: 0 .5em;
+		}
+		form#settings fieldset {
+			width: 12em;
+			margin: .5em 0 0 0;
+			display: inline-block;
+			vertical-align: top;
+		}
+		form#settings legend {
+			font-weight: bold;
+			padding: 0 .5em;
+		}
+		fieldset#effects {
+		}
+		fieldset#timing {
+		}
+		fieldset#pause {
+		}
+		p#doit {
+			display: inline-block;
+			margin-top: 1em;
+		}
+		button[name="doit"] {
+			font-size: 1.2em;
+			padding: .5em 1em !important;
+			background-color: #eee;
+			color: #666;
+			text-shadow: 0 1px 0 white;
+			border-radius: 8px;
+			border: thin solid #999;
+			background-image: linear-gradient(to bottom,#eee,#ddd);
+			box-shadow:
+				inset 1px 1px 1px white,
+				inset -1px -1px 1px #666;
+		}
+		button[name="doit"]:hover,
+		button[name="doit"]:active {
+			background-image: linear-gradient(to top,#eee,#ddd);
+			box-shadow:
+				inset 1px 1px 1px #666,
+				inset -1px -1px 1px white;
+		}
+
 	</style>
 </head>
 <body>
@@ -61,6 +122,54 @@
 			<div>RETRO</div>
 			<div>3D</div>
 		</div>
-	<div>
+	</div>
+	<p>The Text shadows above come from the following web sites:</p>
+	<ul>
+		<li><a target="_blank" href="http://line25.com/articles/using-css-text-shadow-to-create-cool-text-effects">Using CSS Text-Shadow to Create Cool Text Effects</a></li>
+		<li><a target="_blank" href="http://www.midwinter-dg.com/blog_demos/css-text-shadows/">CSS Text Shadows</a></li>
+	</ul>
+	<p>Experiment with the setting below to see different effects:</p>
+	<form id="settings">
+		<h2>Settings</h2>
+		<fieldset id="effects">
+			<legend>Effect</legend>
+			<p><input type="radio" name="method" value="fade" id="fade"><label for="fade">Fade</label>
+				<select name="fade-direction">
+					<option value="both">Both</option>
+					<option value="in">In</option>
+					<option value="out">Out</option>
+					<option value="none">None</option>
+				</select>
+			</p>
+			<p><input type="radio" name="method" value="cover" id="cover"><label for="cover">Cover</label>
+				<select name="cover-direction">
+					<option value="left">Left</option>
+					<option value="right">Right</option>
+					<option value="down">Down</option>
+					<option value="up">Up</option>
+				</select>
+			</p>
+			<p><input type="radio" name="method" value="carousel" id="carousel" checked><label for="carousel">Carousel</label>
+				<select name="carousel-direction">
+					<option value="left" selected>Left</option>
+					<option value="right">Right</option>
+					<option value="down">Down</option>
+					<option value="up">Up</option>
+				</select>
+			</p>
+		</fieldset>
+		<fieldset id="timing">
+			<legend>Timing</legend>
+			<p><label for="delay">Delay</label><input type="text" name="delay" id="delay" value="3000"></p>
+			<p><label for="duration">Duration</label><input type="text" name="duration" id="duration" value="1000"></p>
+			<p><label for="steps">Steps</label><input type="text" name="steps" id="steps" value="20"></p>
+		</fieldset>
+		<fieldset id="pause">
+			<legend>Pause</legend>
+			<p><label for="hover">Hover</label><input type="checkbox" name="hover" id="hover"></p>
+			<p><label for="click">Click</label><input type="checkbox" name="click" id="click" checked></p>
+		</fieldset>
+		<p id="doit"><button name="doit">Do It</button></p>
+	</form>
 </body>
 </html>
